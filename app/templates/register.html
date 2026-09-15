@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>CocoaGuard Registration</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="auth-container">
+
+    <div class="auth-card">
+
+        <h1>Create Account</h1>
+
+        <p class="subtitle">
+            Join CocoaGuard
+        </p>
+
+        <form id="registerForm">
+
+            <label>Full Name</label>
+
+            <input
+                type="text"
+                id="fullName"
+                required
+            >
+
+            <label>Email</label>
+
+            <input
+                type="email"
+                id="email"
+                required
+            >
+
+            <label>Phone Number</label>
+
+            <input
+                type="text"
+                id="phone"
+            >
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                id="password"
+                required
+            >
+
+            <button type="submit">
+                Create Account
+            </button>
+
+        </form>
+
+        <p id="message"></p>
+
+        <p class="switch-text">
+            Already registered?
+            <a href="/login">
+                Login
+            </a>
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const form = document.getElementById("registerForm")
+const message = document.getElementById("message")
+
+form.addEventListener("submit", async function(event) {
+
+    event.preventDefault()
+
+    const fullName =
+        document.getElementById("fullName").value
+
+    const email =
+        document.getElementById("email").value
+
+    const phone =
+        document.getElementById("phone").value
+
+    const password =
+        document.getElementById("password").value
+
+    message.textContent = "Creating account..."
+
+    try {
+
+        const response = await fetch("/api/register", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                full_name: fullName,
+
+                email: email,
+
+                phone: phone,
+
+                password: password,
+
+                role: "Farmer"
+
+            })
+
+        })
+
+        const data = await response.json()
+
+        if (data.success) {
+
+            message.textContent =
+                "Account created successfully."
+
+            setTimeout(() => {
+
+                window.location.href = "/login"
+
+            }, 1000)
+
+        } else {
+
+            message.textContent =
+                data.message || "Registration failed"
+
+        }
+
+    } catch (error) {
+
+        message.textContent =
+            "Unable to connect to CocoaGuard"
+
+    }
+
+})
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>CocoaGuard Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <h2>CocoaGuard</h2>
+
+    <button onclick="logout()">
+        Logout
+    </button>
+
+</header>
+
+
+<main class="dashboard-container">
+
+    <section class="welcome-card">
+
+        <h1 id="welcomeText">
+            Welcome
+        </h1>
+
+        <p>
+            Monitor cocoa health and disease risk.
+        </p>
+
+    </section>
+
+
+    <section class="dashboard-grid">
+
+        <a href="/diagnose"
+           class="dashboard-card">
+
+            <h3>Diagnose Cocoa</h3>
+
+            <p>
+                Upload a cocoa image for AI analysis.
+            </p>
+
+        </a>
+
+
+        <div class="dashboard-card">
+
+            <h3>My Farms</h3>
+
+            <p>
+                Farm management interface coming next.
+            </p>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <h3>Report History</h3>
+
+            <p>
+                View previous cocoa diagnoses.
+            </p>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <h3>Risk Monitoring</h3>
+
+            <p>
+                Track disease risk across your farms.
+            </p>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+const user =
+    JSON.parse(
+        localStorage.getItem("cocoguard_user")
+    )
+
+if (!user) {
+
+    window.location.href = "/login"
+
+} else {
+
+    document.getElementById(
+        "welcomeText"
+    ).textContent =
+        `Welcome, ${user.full_name}`
+
+}
+
+
+function logout() {
+
+    localStorage.removeItem(
+        "cocoguard_user"
+    )
+
+    window.location.href = "/login"
+
+}
+
+</script>
+
+</body>
+
+</html>

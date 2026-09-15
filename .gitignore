@@ -1,0 +1,76 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# =========================
+# Environment / Secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Flask
+# =========================
+instance/
+flask_session/
+
+# User uploaded images
+uploads/
+uploads/*
+
+# =========================
+# Machine Learning
+# =========================
+runs/
+*.pt
+*.pth
+*.onnx
+*.engine
+
+# Dataset
+dataset/
+cocoguard_yolo/
+
+# Kaggle / training data
+Train.csv
+Test.csv
+SampleSubmission.csv
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Windows
+# =========================
+Thumbs.db
+Desktop.ini
+
+# =========================
+# Logs / temporary files
+# =========================
+*.log
+*.tmp
+*.temp
+
+# =========================
+# Database
+# =========================
+*.db
+*.sqlite
+*.sqlite3
+*.bak
+*.mdf
+*.ldf

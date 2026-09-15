@@ -1,0 +1,10 @@
+path: C:/Users/realr/Downloads/archive/cocoguard_yolo
+
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: anthracnose
+  1: cssvd
+  2: healthy

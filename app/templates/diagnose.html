@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>CocoaGuard Diagnosis</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <h2>CocoaGuard</h2>
+
+    <a href="/dashboard">
+        Dashboard
+    </a>
+
+</header>
+
+
+<main class="diagnosis-container">
+
+    <div class="diagnosis-card">
+
+        <h1>Diagnose Cocoa</h1>
+
+        <p>
+            Upload a cocoa leaf or plant image.
+        </p>
+
+
+        <form id="diagnosisForm">
+
+            <label>Farm ID</label>
+
+            <input
+                type="number"
+                id="farmId"
+                required
+            >
+
+
+            <label>Symptoms</label>
+
+            <textarea
+                id="symptoms"
+                placeholder="Describe what you observed..."
+            ></textarea>
+
+
+            <label>Cocoa Image</label>
+
+            <input
+                type="file"
+                id="image"
+                accept="image/png,image/jpeg"
+                required
+            >
+
+
+            <button type="submit">
+                Analyse Image
+            </button>
+
+        </form>
+
+
+        <p id="status"></p>
+
+
+        <div
+            id="resultCard"
+            class="result-card hidden"
+        >
+
+            <h2>Diagnosis Result</h2>
+
+            <p>
+                <strong>Disease:</strong>
+                <span id="disease"></span>
+            </p>
+
+            <p>
+                <strong>Confidence:</strong>
+                <span id="confidence"></span>
+            </p>
+
+            <p>
+                <strong>Risk Score:</strong>
+                <span id="riskScore"></span>
+            </p>
+
+            <p>
+                <strong>Risk Level:</strong>
+                <span id="riskLevel"></span>
+            </p>
+
+            <p>
+                <strong>Recommendation:</strong>
+            </p>
+
+            <p id="recommendation"></p>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<script>
+
+const user =
+    JSON.parse(
+        localStorage.getItem("cocoguard_user")
+    )
+
+if (!user) {
+    window.location.href = "/login"
+}
+
+
+const form =
+    document.getElementById("diagnosisForm")
+
+const status =
+    document.getElementById("status")
+
+const resultCard =
+    document.getElementById("resultCard")
+
+
+form.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault()
+
+        status.textContent =
+            "Analysing cocoa image..."
+
+        resultCard.classList.add(
+            "hidden"
+        )
+
+
+        const image =
+            document.getElementById("image").files[0]
+
+        const farmId =
+            document.getElementById("farmId").value
+
+        const symptoms =
+            document.getElementById("symptoms").value
+
+
+        const formData =
+            new FormData()
+
+
+        formData.append(
+            "farmer_id",
+            user.user_id
+        )
+
+        formData.append(
+            "farm_id",
+            farmId
+        )
+
+        formData.append(
+            "symptoms",
+            symptoms
+        )
+
+        formData.append(
+            "image",
+            image
+        )
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/diagnose",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                )
+
+
+            const data =
+                await response.json()
+
+
+            if (!data.success) {
+
+                status.textContent =
+                    data.message ||
+                    data.error ||
+                    "Diagnosis failed"
+
+                return
+            }
+
+
+            status.textContent =
+                "Analysis complete."
+
+
+            let disease =
+                "No disease detected"
+
+            let confidence =
+                0
+
+
+            if (
+                data.detections &&
+                data.detections.length > 0
+            ) {
+
+                const strongest =
+                    data.detections.reduce(
+                        (previous, current) =>
+                            current.confidence >
+                            previous.confidence
+                                ? current
+                                : previous
+                    )
+
+                disease =
+                    strongest.disease
+
+                confidence =
+                    strongest.confidence
+
+            }
+
+
+            document.getElementById(
+                "disease"
+            ).textContent =
+                disease
+
+
+            document.getElementById(
+                "confidence"
+            ).textContent =
+                `${(confidence * 100).toFixed(1)}%`
+
+
+            document.getElementById(
+                "riskScore"
+            ).textContent =
+                data.risk_assessment.risk_score
+
+
+            document.getElementById(
+                "riskLevel"
+            ).textContent =
+                data.risk_assessment.risk_level
+
+
+            document.getElementById(
+                "recommendation"
+            ).textContent =
+                data.risk_assessment
+                    .recommended_action
+
+
+            resultCard.classList.remove(
+                "hidden"
+            )
+
+        } catch (error) {
+
+            status.textContent =
+                "Unable to connect to CocoaGuard."
+
+        }
+
+    }
+)
+
+</script>
+
+</body>
+
+</html>
