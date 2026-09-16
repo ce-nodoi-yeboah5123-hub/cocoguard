@@ -2,7 +2,9 @@
 name = "cocoguard"
 version = "1.0.0"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "Flask"
+]
 
 [tool.vercel]
 entrypoint = "run:app"
